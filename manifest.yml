@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: orderapp
+  name: orderapp
+  namespace: idempotent
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orderapp
+  template:
+    metadata:
+      labels:
+        app: orderapp
+    spec:
+      containers:
+      - name: orderapp
+        image: docker.io/widedreadnout/otus-microservice-order
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-order-appsettings
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderapp-service
+  namespace: idempotent
+  labels:
+    app: orderapp
+    app.kubernetes.io/instance: orderapp
+    app.kubernetes.io/name: orderapp
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+  selector:
+    app: orderapp
+  type: NodePort
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orderapp-ingress
+  namespace: idempotent
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: "arch.homework"
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: orderapp-service
+              port:
+                number: 80
