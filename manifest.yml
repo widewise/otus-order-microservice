@@ -4,7 +4,7 @@ metadata:
   labels:
     app: orderapp
   name: orderapp
-  namespace: idempotent
+  namespace: saga
 spec:
   replicas: 3
   selector:
@@ -31,11 +31,110 @@ spec:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: paymentapp
+  name: paymentapp
+  namespace: saga
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paymentapp
+  template:
+    metadata:
+      labels:
+        app: paymentapp
+    spec:
+      containers:
+      - name: paymentapp
+        image: docker.io/widedreadnout/otus-microservice-payment
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-payment-appsettings
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: storeapp
+  name: storeapp
+  namespace: saga
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: storeapp
+  template:
+    metadata:
+      labels:
+        app: storeapp
+    spec:
+      containers:
+      - name: storeapp
+        image: docker.io/widedreadnout/otus-microservice-store
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-store-appsettings
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deliveryapp
+  name: deliveryapp
+  namespace: saga
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: deliveryapp
+  template:
+    metadata:
+      labels:
+        app: deliveryapp
+    spec:
+      containers:
+      - name: deliveryapp
+        image: docker.io/widedreadnout/otus-microservice-delivery
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-delivery-appsettings
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: orderapp-service
-  namespace: idempotent
+  namespace: saga
   labels:
     app: orderapp
     app.kubernetes.io/instance: orderapp
@@ -51,14 +150,73 @@ spec:
 
 ---
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymentapp-service
+  namespace: saga
+  labels:
+    app: paymentapp
+    app.kubernetes.io/instance: paymentapp
+    app.kubernetes.io/name: paymentapp
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+  selector:
+    app: paymentapp
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: storeapp-service
+  namespace: saga
+  labels:
+    app: storeapp
+    app.kubernetes.io/instance: storeapp
+    app.kubernetes.io/name: storeapp
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+  selector:
+    app: storeapp
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: deliveryapp-service
+  namespace: saga
+  labels:
+    app: deliveryapp
+    app.kubernetes.io/instance: deliveryapp
+    app.kubernetes.io/name: deliveryapp
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+  selector:
+    app: deliveryapp
+  type: NodePort
+
+---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: orderapp-ingress
-  namespace: idempotent
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
+  namespace: saga
 spec:
+  ingressClassName: nginx
   rules:
   - host: "arch.homework"
     http:

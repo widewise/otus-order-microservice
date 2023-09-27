@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Otus.Microservice.Events;
+using Otus.Microservice.Events.Models;
 using Otus.Microservice.Order;
+using Otus.Microservice.Order.Consumers;
+using Otus.Microservice.TransportLibrary.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +24,14 @@ if (dbConnectionString != null)
         options.UseNpgsql(dbConnectionString));
 }
 
+builder.Services.AddTransportCore(builder.Configuration);
+builder.Services.AddTransportPublisher<ProcessPaymentEvent>(EventConstants.PaymentExchange);
+builder.Services.AddTransportConsumer<ProcessPaymentRejectEvent, ProcessPaymentRejectConsumer>(
+    EventConstants.OrderExchange,
+    EventConstants.ProcessPaymentRejectedEvent);
+
 var app = builder.Build();
+app.Services.BuildTransportMap();
 
 var logger = app.Services.GetService<ILogger<Program>>();
 logger.LogInformation("DB connection string: {DBConnectionString}", dbConnectionString);

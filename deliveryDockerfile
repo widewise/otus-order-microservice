@@ -1,0 +1,21 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 8000
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["Otus.Microservice.Delivery/Otus.Microservice.Delivery.csproj", "Otus.Microservice.Delivery/"]
+COPY ["Otus.Microservice.Events/Otus.Microservice.Events.csproj", "Otus.Microservice.Events/"]
+COPY ["Otus.Microservice.TransportLibrary/Otus.Microservice.TransportLibrary.csproj", "Otus.Microservice.TransportLibrary/"]
+RUN dotnet restore "Otus.Microservice.Delivery/Otus.Microservice.Delivery.csproj"
+COPY . .
+WORKDIR "/src/Otus.Microservice.Delivery"
+RUN dotnet build "Otus.Microservice.Delivery.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Otus.Microservice.Delivery.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Otus.Microservice.Delivery.dll"]

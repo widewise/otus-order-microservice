@@ -2,6 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Order", "Otus.Microservice.Order\Otus.Microservice.Order.csproj", "{DC9BCADD-AF90-4DCC-BD6D-7580829CF6BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Payment", "Otus.Microservice.Payment\Otus.Microservice.Payment.csproj", "{760259E5-745B-441B-BDD2-677478C7941F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Delivery", "Otus.Microservice.Delivery\Otus.Microservice.Delivery.csproj", "{7BBC50B0-28E7-4CE5-AB23-33F20F0C95D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Store", "Otus.Microservice.Store\Otus.Microservice.Store.csproj", "{A0D93D61-BFB7-401B-9D97-5AF4528B2E37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.TransportLibrary", "Otus.Microservice.TransportLibrary\Otus.Microservice.TransportLibrary.csproj", "{14B9DC33-42A6-435E-9347-A83E16C23332}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Events", "Otus.Microservice.Events\Otus.Microservice.Events.csproj", "{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +22,25 @@ Global
 		{DC9BCADD-AF90-4DCC-BD6D-7580829CF6BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC9BCADD-AF90-4DCC-BD6D-7580829CF6BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC9BCADD-AF90-4DCC-BD6D-7580829CF6BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{760259E5-745B-441B-BDD2-677478C7941F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{760259E5-745B-441B-BDD2-677478C7941F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{760259E5-745B-441B-BDD2-677478C7941F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{760259E5-745B-441B-BDD2-677478C7941F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BBC50B0-28E7-4CE5-AB23-33F20F0C95D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BBC50B0-28E7-4CE5-AB23-33F20F0C95D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BBC50B0-28E7-4CE5-AB23-33F20F0C95D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BBC50B0-28E7-4CE5-AB23-33F20F0C95D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0D93D61-BFB7-401B-9D97-5AF4528B2E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0D93D61-BFB7-401B-9D97-5AF4528B2E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0D93D61-BFB7-401B-9D97-5AF4528B2E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0D93D61-BFB7-401B-9D97-5AF4528B2E37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14B9DC33-42A6-435E-9347-A83E16C23332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14B9DC33-42A6-435E-9347-A83E16C23332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14B9DC33-42A6-435E-9347-A83E16C23332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14B9DC33-42A6-435E-9347-A83E16C23332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

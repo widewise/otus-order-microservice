@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Otus.Microservice.Events.Models;
+using Otus.Microservice.TransportLibrary;
+using Otus.Microservice.TransportLibrary.Services;
 
 namespace Otus.Microservice.Order.Controllers;
 
@@ -10,13 +13,31 @@ public class OrderController: ControllerBase
 {
     private readonly ILogger<OrderController> _logger;
     private readonly AppDbContext _dbContext;
+    private readonly IMessagePublisher<ProcessPaymentEvent> _processPaymentPublisher;
 
     public OrderController(
         ILogger<OrderController> logger,
-        AppDbContext dbContext)
+        AppDbContext dbContext,
+        IMessagePublisher<ProcessPaymentEvent> processPaymentPublisher)
     {
         _logger = logger;
         _dbContext = dbContext;
+        _processPaymentPublisher = processPaymentPublisher;
+    }
+
+    [HttpGet("{requestId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetOrder([FromRoute] string requestId)
+    {
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(
+            x => x.RequestId == requestId);
+        if (order == null)
+        {
+            _logger.LogWarning("Order with request id {RequestId} is not found", requestId);
+            return NotFound();
+        }
+
+        return Ok(order);
     }
 
     [HttpPost]
@@ -38,6 +59,14 @@ public class OrderController: ControllerBase
             createdOrder.RequestId = requestId;
             await _dbContext.AddAsync(createdOrder);
             await _dbContext.SaveChangesAsync();
+            _processPaymentPublisher.Send(new ProcessPaymentEvent
+            {
+                TransactionId = requestId,
+                ProductId = createdOrder.ProductId,
+                Count = createdOrder.Count,
+                PaymentValue = createdOrder.Cost,
+                Address = createdOrder.Address
+            });
             return Ok();
         }
         catch (Exception e)

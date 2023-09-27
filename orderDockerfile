@@ -4,10 +4,12 @@ EXPOSE 8000
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Otus.Microservice.Order.csproj", "Otus.Microservice.Order/"]
+COPY ["Otus.Microservice.Order/Otus.Microservice.Order.csproj", "Otus.Microservice.Order/"]
+COPY ["Otus.Microservice.Events/Otus.Microservice.Events.csproj", "Otus.Microservice.Events/"]
+COPY ["Otus.Microservice.TransportLibrary/Otus.Microservice.TransportLibrary.csproj", "Otus.Microservice.TransportLibrary/"]
 RUN dotnet restore "Otus.Microservice.Order/Otus.Microservice.Order.csproj"
-WORKDIR "/src/Otus.Microservice.Order"
 COPY . .
+WORKDIR "/src/Otus.Microservice.Order"
 RUN dotnet build "Otus.Microservice.Order.csproj" -c Release -o /app/build
 
 FROM build AS publish

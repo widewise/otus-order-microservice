@@ -12,7 +12,7 @@ using Otus.Microservice.Order;
 namespace Otus.Microservice.Order.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230813175340_Initial")]
+    [Migration("20230926161528_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -33,14 +33,23 @@ namespace Otus.Microservice.Order.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("numeric");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RequestId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
