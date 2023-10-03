@@ -1,0 +1,8 @@
+sequenceDiagram
+    actor User
+    User->>+Order: POST /api/order
+    Order->>+Payment: POST /api/account/{accountId}/withdrawal
+    Payment->>+Notification: POST /api/notification
+    Notification-->>-Payment: 200 Ok
+    Payment-->>-Order: 200 Ok
+    Order-->>-User: 200 Ok

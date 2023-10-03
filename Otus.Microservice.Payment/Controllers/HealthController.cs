@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Otus.Microservice.Order.Models;
 using Otus.Microservice.TransportLibrary.Models;
 
-namespace Otus.Microservice.Order.Controllers;
+namespace Otus.Microservice.Payment.Controllers;
 
 [ApiController]
 [Route("[controller]")]

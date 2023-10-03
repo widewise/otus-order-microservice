@@ -1,0 +1,14 @@
+sequenceDiagram
+    actor User
+    User->>+Order: POST /api/order
+    Order->>Broker: ProcessPaymentEvent post
+    Order-->>-User: 200 Ok
+    Payment->>Broker: Read ProcessPaymentEvent
+    activate Payment
+    Payment->>Broker: SendNotificationEvent post
+    Payment-->>Broker: Ack ProcessPaymentEvent
+    deactivate Payment
+    Notification->>Broker: Read SendNotificationEvent
+    activate Notification
+    Notification-->>Broker: Ack SendNotificationEvent
+    deactivate Notification

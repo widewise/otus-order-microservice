@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Otus.Microservice.Order.Migrations
+namespace Otus.Microservice.Notification.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -13,21 +12,21 @@ namespace Otus.Microservice.Order.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RequestId = table.Column<string>(type: "text", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    Count = table.Column<int>(type: "integer", nullable: false),
-                    Cost = table.Column<decimal>(type: "numeric", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false)
+                    TransactionId = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    ToAddress = table.Column<string>(type: "text", nullable: false),
+                    FromAddress = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                 });
         }
 
@@ -35,7 +34,7 @@ namespace Otus.Microservice.Order.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Notifications");
         }
     }
 }

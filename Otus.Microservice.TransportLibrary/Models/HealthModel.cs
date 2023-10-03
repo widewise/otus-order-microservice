@@ -1,4 +1,4 @@
-﻿namespace Otus.Microservice.Order.Models;
+﻿namespace Otus.Microservice.TransportLibrary.Models;
 
 public class HealthModel
 {

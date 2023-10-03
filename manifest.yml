@@ -130,6 +130,39 @@ spec:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notificationapp
+  name: notificationapp
+  namespace: saga
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: notificationapp
+  template:
+    metadata:
+      labels:
+        app: notificationapp
+    spec:
+      containers:
+      - name: notificationapp
+        image: docker.io/widedreadnout/otus-microservice-notification
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-notification-appsettings
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -206,6 +239,26 @@ spec:
     protocol: TCP
   selector:
     app: deliveryapp
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificationapp-service
+  namespace: saga
+  labels:
+    app: notificationapp
+    app.kubernetes.io/instance: notificationapp
+    app.kubernetes.io/name: notificationapp
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+  selector:
+    app: notificationapp
   type: NodePort
 
 ---

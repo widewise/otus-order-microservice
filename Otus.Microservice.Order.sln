@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Transport
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Events", "Otus.Microservice.Events\Otus.Microservice.Events.csproj", "{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otus.Microservice.Notification", "Otus.Microservice.Notification\Otus.Microservice.Notification.csproj", "{ED79DDCF-1A87-440A-8A2D-E554C3FABAD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5A05F41-0996-4096-BCF7-73C6CD8D0C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED79DDCF-1A87-440A-8A2D-E554C3FABAD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED79DDCF-1A87-440A-8A2D-E554C3FABAD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED79DDCF-1A87-440A-8A2D-E554C3FABAD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED79DDCF-1A87-440A-8A2D-E554C3FABAD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

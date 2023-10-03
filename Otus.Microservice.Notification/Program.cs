@@ -1,13 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Otus.Microservice.Events;
 using Otus.Microservice.Events.Models;
-using Otus.Microservice.Payment;
-using Otus.Microservice.Payment.Consumers;
+using Otus.Microservice.Notification;
+using Otus.Microservice.Notification.Consumers;
+using Otus.Microservice.Notification.Models;
 using Otus.Microservice.TransportLibrary.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("secrets/appsettings.secrets.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
+
+builder.Services.Configure<NotificationSettings>(
+    builder.Configuration.GetSection(NotificationSettings.Section));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -23,21 +28,14 @@ if (dbConnectionString != null)
 }
 
 builder.Services.AddTransportCore(builder.Configuration);
-builder.Services.AddTransportPublisher<NotificationSendEvent>(EventConstants.NotificationExchange);
-builder.Services.AddTransportPublisher<BookProductEvent>(EventConstants.StoreExchange);
-builder.Services.AddTransportPublisher<ProcessPaymentRejectEvent>(EventConstants.OrderExchange);
-builder.Services.AddTransportConsumerWithReject<ProcessPaymentEvent, ProcessPaymentRejectEvent, ProcessPaymentConsumer>(
-    EventConstants.OrderExchange,
-    EventConstants.PaymentExchange,
-    EventConstants.ProcessPaymentEvent);
-builder.Services.AddTransportConsumer<BookProductRejectEvent, BookProductRejectConsumer>(
-    EventConstants.PaymentExchange,
-    EventConstants.StoreProductRejectedEvent);
+builder.Services.AddTransportConsumer<NotificationSendEvent, NotificationSendConsumer>(
+    EventConstants.NotificationExchange,
+    EventConstants.NotificationSendEvent);
 
 var app = builder.Build();
 app.Services.BuildTransportMap();
 
-var logger = app.Services.GetService<ILogger<Program>>();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("DB connection string: {DBConnectionString}", dbConnectionString);
 
 if (dbConnectionString != null)

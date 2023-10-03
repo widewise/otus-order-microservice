@@ -18,5 +18,6 @@ kubectl create secret generic secret-order-appsettings --namespace saga --from-f
 kubectl create secret generic secret-payment-appsettings --namespace saga --from-file=./Otus.Microservice.Payment/appsettings.secrets.json
 kubectl create secret generic secret-store-appsettings --namespace saga --from-file=./Otus.Microservice.Store/appsettings.secrets.json
 kubectl create secret generic secret-delivery-appsettings --namespace saga --from-file=./Otus.Microservice.Delivery/appsettings.secrets.json
+kubectl create secret generic secret-notification-appsettings --namespace saga --from-file=./Otus.Microservice.Notification/appsettings.secrets.json
 
 kubectl apply -f manifest.yml

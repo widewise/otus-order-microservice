@@ -19,5 +19,7 @@ public static class EventConstants
     public static string StoreProductEvent = $"{StoreExchange}-{StoreProductOperation}";
     public static string StoreProductRejectedEvent = $"{StoreProductEvent}-{RejectedPostfix}";
 
-    public static string GetRejectedEvent(string eventName) => $"{eventName}-{RejectedPostfix}";
+    public static string NotificationExchange = "notification";
+    public static string NotificationSendOperation = "send";
+    public static string NotificationSendEvent = $"{NotificationExchange}-{NotificationSendOperation}";
 }

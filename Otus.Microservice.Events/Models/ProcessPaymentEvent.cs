@@ -17,5 +17,6 @@ public class ProcessPaymentEvent : IRejectableEvent
     public int ProductId { get; set; }
     public string Address { get; set; } = null!;
     public int Count { get; set; }
+    public long AccountId { get; set; }
     public decimal PaymentValue { get; set; }
 }

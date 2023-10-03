@@ -64,6 +64,7 @@ public class OrderController: ControllerBase
                 TransactionId = requestId,
                 ProductId = createdOrder.ProductId,
                 Count = createdOrder.Count,
+                AccountId = createdOrder.AccountId,
                 PaymentValue = createdOrder.Cost,
                 Address = createdOrder.Address
             });

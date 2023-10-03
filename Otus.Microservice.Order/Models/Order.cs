@@ -10,6 +10,7 @@ public class Order
     public DateTime CreateDate { get; set; }
     public int ProductId { get; set; }
     public int Count { get; set; }
+    public long AccountId { get; set; }
     public decimal Cost { get; set; }
     public string Address { get; set; } = null!;
 }

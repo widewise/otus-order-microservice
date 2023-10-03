@@ -7,16 +7,15 @@
 	},
 	"item": [
 		{
-			"name": "Create order",
+			"name": "Create account",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Check first order creation\", () => {\r",
+							"pm.test(\"Check account creation\", () => {\r",
 							"  pm.response.to.have.status(200);\r",
-							"  pm.collectionVariables.set(\"request_id\", pm.request.headers.get(\"x-request-id\"));\r",
-							"  pm.collectionVariables.set(\"request\", pm.request.body.raw);\r",
+							"  pm.collectionVariables.set(\"account_request_id\", pm.request.headers.get(\"x-request-id\"));\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -46,7 +45,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"createDate\": \"{{$isoTimestamp}}\",\r\n  \"productId\": {{$randomInt}},\r\n  \"count\": {{$randomInt}},\r\n  \"cost\": {{$randomInt}},\r\n  \"address\": \"{{$randomStreetAddress}}\"\r\n}",
+					"raw": "{\r\n  \"name\": \"{{$randomUserName}}\",\r\n  \"notificationAddress\": \"{{$randomEmail}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -54,46 +53,105 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/api/order",
+					"raw": "http://{{basePaymentUrl}}/api/account",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"{{basePaymentUrl}}"
 					],
 					"path": [
 						"api",
-						"order"
+						"account"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Retry create order",
+			"name": "Get account",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Check retry order creation\", () => {\r",
+							"pm.test(\"Read account id for request id\", () => {\r",
 							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.collectionVariables.set(\"accountId\", responseJson.id);\r",
 							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
 						],
 						"type": "text/javascript"
 					}
 				}
 			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{basePaymentUrl}}/api/account/{{account_request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{basePaymentUrl}}"
+					],
+					"path": [
+						"api",
+						"account",
+						"{{account_request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account discount added\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PATCH",
 				"header": [
 					{
 						"key": "x-request-id",
-						"value": "{{request_id}}",
+						"value": "{{$guid}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{{request}}",
+					"raw": "{\r\n  \"value\": 5000\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -101,10 +159,119 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/api/order",
+					"raw": "http://{{basePaymentUrl}}/api/account/{{accountId}}/deposit",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"{{basePaymentUrl}}"
+					],
+					"path": [
+						"api",
+						"account",
+						"{{accountId}}",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check account deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account balance\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.balance).to.eql(5000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{basePaymentUrl}}/api/account/{{account_request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{basePaymentUrl}}"
+					],
+					"path": [
+						"api",
+						"account",
+						"{{account_request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check first order creation\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  pm.collectionVariables.set(\"request_id\", pm.request.headers.get(\"x-request-id\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-request-id",
+						"value": "{{$guid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"createDate\": \"{{$isoTimestamp}}\",\r\n  \"productId\": {{$randomInt}},\r\n  \"count\": {{$randomInt}},\r\n  \"accountId\": {{accountId}},\r\n  \"cost\": 1000,\r\n  \"address\": \"{{$randomStreetAddress}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseOrderUrl}}/api/order",
+					"protocol": "http",
+					"host": [
+						"{{baseOrderUrl}}"
 					],
 					"path": [
 						"api",
@@ -132,6 +299,53 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"setTimeout(function(){}, 100);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseOrderUrl}}/api/order/{{request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseOrderUrl}}"
+					],
+					"path": [
+						"api",
+						"order",
+						"{{request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check account withdrawal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account balance\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.balance).to.eql(4000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
 							""
 						],
 						"type": "text/javascript"
@@ -145,14 +359,61 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{baseUrl}}/api/order/{{request_id}}",
+					"raw": "http://{{basePaymentUrl}}/api/account/{{account_request_id}}",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"{{basePaymentUrl}}"
 					],
 					"path": [
 						"api",
-						"order",
+						"account",
+						"{{account_request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check success notification",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check notification is succeed\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.type).to.eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseNotificationUrl}}/api/notification/{{request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseNotificationUrl}}"
+					],
+					"path": [
+						"api",
+						"notification",
 						"{{request_id}}"
 					]
 				}
@@ -198,7 +459,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"createDate\": \"{{$isoTimestamp}}\",\r\n  \"productId\": {{$randomInt}},\r\n  \"count\": {{$randomInt}},\r\n  \"cost\": {{$randomInt}},\r\n  \"address\": \"\"\r\n}",
+					"raw": "{\r\n  \"createDate\": \"{{$isoTimestamp}}\",\r\n  \"productId\": {{$randomInt}},\r\n  \"count\": {{$randomInt}},\r\n  \"accountId\": {{accountId}},\r\n  \"cost\": 10000,\r\n  \"address\": \"{{$randomStreetAddress}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -206,10 +467,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://{{baseUrl}}/api/order",
+					"raw": "http://{{baseOrderUrl}}/api/order",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"{{baseOrderUrl}}"
 					],
 					"path": [
 						"api",
@@ -226,7 +487,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Check first order creation\", () => {\r",
+							"pm.test(\"Check invalid order creation\", () => {\r",
 							"  pm.response.to.have.status(404);\r",
 							"});"
 						],
@@ -237,7 +498,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"setTimeout(function(){}, 1000);"
+							"setTimeout(function(){}, 100);"
 						],
 						"type": "text/javascript"
 					}
@@ -250,15 +511,109 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{baseUrl}}/api/order/{{request_id}}",
+					"raw": "http://{{baseOrderUrl}}/api/order/{{request_id}}",
 					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"{{baseOrderUrl}}"
 					],
 					"path": [
 						"api",
 						"order",
 						"{{request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check failed notification",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check notification is failed\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.type).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseNotificationUrl}}/api/notification/{{request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseNotificationUrl}}"
+					],
+					"path": [
+						"api",
+						"notification",
+						"{{request_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check account balance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account balance\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.balance).to.eql(4000);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{basePaymentUrl}}/api/account/{{account_request_id}}",
+					"protocol": "http",
+					"host": [
+						"{{basePaymentUrl}}"
+					],
+					"path": [
+						"api",
+						"account",
+						"{{account_request_id}}"
 					]
 				}
 			},
@@ -287,8 +642,23 @@
 	],
 	"variable": [
 		{
-			"key": "baseUrl",
-			"value": "arch.homework",
+			"key": "baseOrderUrl",
+			"value": "localhost:5044",
+			"type": "string"
+		},
+		{
+			"key": "basePaymentUrl",
+			"value": "localhost:5061",
+			"type": "string"
+		},
+		{
+			"key": "baseNotificationUrl",
+			"value": "localhost:5124",
+			"type": "string"
+		},
+		{
+			"key": "account_request_id",
+			"value": "",
 			"type": "string"
 		},
 		{
@@ -297,7 +667,7 @@
 			"type": "string"
 		},
 		{
-			"key": "request",
+			"key": "accountId",
 			"value": "",
 			"type": "string"
 		}
